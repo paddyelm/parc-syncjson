@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
 
 # C extensions
 *.so
@@ -172,3 +176,14 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignore user settings (optional, if using an IDE like VSCode)
+.vscode/
+.idea/
+
+
+# Ignore project runtime folders
+logs/
+output/
+psarcs/
+temp/

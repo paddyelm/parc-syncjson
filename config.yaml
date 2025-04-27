@@ -1,0 +1,13 @@
+# Logging configuration
+log_level: INFO
+log_folder: "./logs"
+
+# Input and Output folders
+input_folder: "./psarcs"
+output_folder: "./output"
+
+# Audio extraction
+extract_audio: true
+
+# File overwriting behavior
+overwrite_output: false
