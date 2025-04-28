@@ -3,6 +3,7 @@ import zlib
 from pathlib import Path
 from typing import Optional
 import tempfile
+from utils.logger import Logger
 
 class PsarcExtractor:
     """
@@ -21,6 +22,8 @@ class PsarcExtractor:
         self.zlib_block_size = None
         self.num_entries = None
         self.toc_entry_size = None
+        self._logger = Logger().get_logger()
+        self._logger.info(f"PsarcExtractor initialized for {self.psarc_path}")
 
     def extract_song_xml(self) -> Optional[str]:
         """
@@ -29,6 +32,7 @@ class PsarcExtractor:
         Returns:
             Optional[str]: Path to the extracted song XML file, or None if not found.
         """
+        self._logger.info(f"Starting extraction for {self.psarc_path}")
         with open(self.psarc_path, 'rb') as f:
             self._read_header(f)
             entries = self._read_toc(f)
@@ -37,8 +41,10 @@ class PsarcExtractor:
 
         for file in self.temp_dir.iterdir():
             if file.name.endswith("song.xml") or "song" in file.name.lower():
+                self._logger.info(f"Found song XML: {file}")
                 return str(file)
 
+        self._logger.warning("No song XML found in extracted files.")
         return None
 
     def _read_header(self, f):
@@ -53,6 +59,7 @@ class PsarcExtractor:
         """
         magic = f.read(4)
         if magic != b'PSAR':
+            self._logger.error("Invalid PSARC file: Missing 'PSAR' magic header.")
             raise ValueError("Invalid PSARC file")
 
         version = struct.unpack(">I", f.read(4))[0]
@@ -62,6 +69,7 @@ class PsarcExtractor:
         self.num_entries = struct.unpack(">I", f.read(4))[0]
 
         self._compressed_toc = f.read(toc_length)
+        self._logger.debug(f"Read header: version={version}, entries={self.num_entries}")
 
     def _read_toc(self, f):
         """
@@ -84,6 +92,7 @@ class PsarcExtractor:
             length = struct.unpack(">I", entry[24:28])[0]
             entries.append((file_size, block_index, length))
 
+        self._logger.debug(f"Parsed {len(entries)} TOC entries.")
         return entries
 
     def _read_blocks(self, f):
@@ -106,6 +115,7 @@ class PsarcExtractor:
                 continue
             block_data = f.read(block_size)
             blocks.append(block_data)
+        self._logger.debug(f"Read {len(blocks)} blocks from PSARC.")
         return blocks
 
     def _reconstruct_files(self, entries, blocks):
@@ -125,3 +135,4 @@ class PsarcExtractor:
             data = b''.join(blocks[block_index:block_index + (length + self.zlib_block_size - 1) // self.zlib_block_size])
             output_file_path = self.temp_dir / f"extracted_{idx}.bin"
             output_file_path.write_bytes(data[:file_size])
+        self._logger.info(f"Reconstructed {len(entries)} files into {self.temp_dir}")

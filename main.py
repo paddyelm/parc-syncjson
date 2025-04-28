@@ -1,4 +1,4 @@
-from utils.logger import init_logger
+from utils.logger import Logger
 from utils.config import load_config
 from parsers.psarc_parser import PsarcExtractor
 from generators.sync_generator import SyncGenerator
@@ -17,7 +17,8 @@ def main():
         None
     """
     config = load_config()
-    logger = init_logger(config)
+    logger = Logger(config).get_logger()
+    logger.info("Application starting...")
 
     logger.info("Starting sync.json generation process...")
 
@@ -29,6 +30,9 @@ def main():
         sys.exit(1)
 
     output_folder.mkdir(parents=True, exist_ok=True)
+
+    success_count = 0
+    failure_count = 0
 
     for psarc_file in input_folder.glob("*.psarc"):
         logger.info(f"Processing {psarc_file.name}")
@@ -44,13 +48,16 @@ def main():
                 output_file = output_folder / f"{psarc_file.stem}_sync.json"
                 generator.save_sync(sync_data, output_file)
                 logger.info(f"sync.json created: {output_file}")
+                success_count += 1
             else:
                 logger.warning(f"No song XML found in {psarc_file.name}")
+                failure_count += 1
 
         except Exception as e:
             logger.exception(f"Error processing {psarc_file.name}: {e}")
+            failure_count += 1
 
-    logger.info("All done!")
+    logger.info(f"Processing complete. Successful: {success_count}, Failed: {failure_count}")
 
 if __name__ == "__main__":
     main()

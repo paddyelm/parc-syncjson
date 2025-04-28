@@ -21,14 +21,15 @@ Designed to be clean, extensible, and highly configurable via YAML settings and 
 
 ```plaintext
 project_root/
-├── psarcs/         # Drop your .psarc files here
-├── output/         # Extracted sync.json and other output files
-├── logs/           # Log files
-├── parsers/        # PSARC file parsers
-├── generators/     # Sync.json file generators
-├── utils/          # Logging, config, and helpers
-├── config.yaml     # Application settings
-└── main.py         # Entry point
+├── resources/
+│   ├── psarcs/      # Drop your .psarc files here
+│   ├── output/      # Extracted sync.json and other output files
+│   ├── logs/        # Log files
+├── parsers/         # PSARC file parsers
+├── generators/      # Sync.json file generators
+├── utils/           # Logging, config, and helpers
+├── config.yaml      # Application settings
+└── main.py          # Entry point
 ```
 
 ---
@@ -36,7 +37,21 @@ project_root/
 ## 🛠️ Installation
 
 1. Clone the repository
-2. Install Python dependencies:
+2. Create and activate a virtual environment:
+
+```bash
+# Create a virtual environment
+python3 -m venv venv
+
+# Activate the virtual environment
+# On Linux/Mac
+source venv/bin/activate
+
+# On Windows
+venv\Scripts\activate
+```
+
+3. Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -46,8 +61,6 @@ Typical dependencies:
 - `loguru`
 - `PyYAML`
 
-(You may also want `construct` or other binary helpers later.)
-
 ---
 
 ## ⚙️ Configuration
@@ -56,9 +69,9 @@ All settings are stored in `config.yaml`:
 
 ```yaml
 log_level: INFO
-input_folder: "./psarcs"
-output_folder: "./output"
-log_folder: "./logs"
+input_folder: "./resources/psarcs"
+output_folder: "./resources/output"
+log_folder: "./resources/logs"
 extract_audio: true
 overwrite_output: false
 ```
@@ -69,14 +82,14 @@ You can control logging, extraction behaviour, and folders here.
 
 ## 🚀 Usage
 
-After placing your `.psarc` files into the `psarcs/` directory, run:
+After placing your `.psarc` files into the `resources/psarcs/` directory, run:
 
 ```bash
 python main.py
 ```
 
-- Output `sync.json` files will be saved in the `output/` directory.
-- Logs will appear under the `logs/` directory.
+- Output `sync.json` files will be saved in the `resources/output/` directory.
+- Logs will appear under the `resources/logs/` directory.
 
 ---
 
@@ -89,7 +102,7 @@ If you find bugs or want to add features (like advanced audio extraction), feel 
 
 ## 📄 License
 
-(You can add an open-source license here later, e.g., MIT License.)
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 

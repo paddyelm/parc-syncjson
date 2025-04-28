@@ -1,10 +1,10 @@
 # Logging configuration
 log_level: INFO
-log_folder: "./logs"
+log_folder: "./resources/logs"
 
 # Input and Output folders
-input_folder: "./psarcs"
-output_folder: "./output"
+input_folder: "./resources/psarcs"
+output_folder: "./resources/output"
 
 # Audio extraction
 extract_audio: true
